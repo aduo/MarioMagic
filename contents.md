@@ -1,6 +1,6 @@
 # 目录
 
-- 简介
+- [简介](intro.md)
 - 通用知识
   - [基本认知](gamebasic.md)
   - [两种控制模式](ctrlpattern.md)
@@ -8,7 +8,7 @@
   - [移动与修正](movecorrection.md)
   - [碰撞检测法](colldet.md)
   - [运动模型](movemodel.md)
-  - 地面检测
+  - [地面检测](groundadapt.md)
 - 实现
   - 行走
   - 跳跃
