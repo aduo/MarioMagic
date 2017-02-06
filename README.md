@@ -23,6 +23,6 @@
   - [振荡效果](swing.md)
   - 运送板
   - 卷轴滚动
-  - 弹簧
+  - [弹簧](jumpspring.md)
 
 *kbridge*
