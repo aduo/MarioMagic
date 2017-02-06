@@ -18,7 +18,7 @@
   - [运动模型](movemodel.md)
   - [地面检测](groundadapt.md)
 - 实现
-  - 行走
+  - [行走](walk.md)
   - [跳跃与摔落](jump.md)
   - [振荡效果](swing.md)
   - 运送板
