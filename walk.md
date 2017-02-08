@@ -1,55 +1,194 @@
 # 行走
 
-## 一些细节
+## 最简单的行走
+
+左右键按下时匀速前进，松开时停止运动。
+
+```java
+if (leftKeyPressed)
+	entity.x -= SPEED;
+else if (rightKeyPressed)
+	entity.x += SPEED;
+```
+
+## 标准行走的要素
+
+更为复杂的行走中，左右键通过控制加速度间接改变速度。
+
+每帧应进行以下物理模拟：
+
+```java
+int accel; // 加速度
+entity.x += entity.speed;
+entity.speed += accel;
+```
 
 ### 左右键过滤
 
-当左右都按下时，应该按都没按下处理。
+行走算法需要知道当前是仅左键按下（玩家想向左运动）、仅右键按下（玩家想向右运动）还是两键都没按下。
+
+两键都按下的情况应被当做都没按下处理。不应作为第四种状态。
+
+一种过滤算法：
+
+```java
+int leftRightKey;
+if (leftKeyPressed == rightKeyPressed)
+	leftRightKey = NONE;
+else
+    leftRightKey = leftKeyPressed ? LEFT : RIGHT;
+```
+
+如果使用bitset存储按键状态：
+
+```java
+int leftRightKey;
+int keys = keypad & (KEY_LEFT | KEY_RIGHT);
+if (keys == KEY_LEFT)
+	leftRightKey = LEFT;
+else if (keys == KEY_RIGHT)
+	leftRightKey = RIGHT;
+else
+	leftRightKey = NONE;
+```
 
 ### 朝向
 
-facingDir
+玩家面朝左还是面朝右，不是物理模拟中的变量，但会在绘图时用到。
 
-### 加速
+此类游戏确定玩家朝向使用的都是以下方法：
 
-### 刹车
+```java
+int facingDir = RIGHT; // 默认朝右
+if (leftRightKey != NONE)
+	facingDir = leftRightKey;
+```
 
-松开左右键时，开始受摩擦力影响减速。原地刹车
+可以只做向右移动的动画。向左移动的动画通过水平翻转（horizontal flip）实现。现代图形程序库都支持水平翻转。
 
-左右键决定了加速度。若加速度方向与行进方向相反，则是在反向刹车。此时应该受到更大（通常是双倍）的摩擦力。
+### 加速、减速和刹车
 
-### 坡路
+**加速**：按键使玩家速度加快的过程。
+
+应该设置一个**最大横向速度**，防止玩家移动过快：
+
+```java
+final int MAX_X_SPEED = 12;
+entity.xSpeed += accel;
+if (entity.xSpeed > MAX_X_SPEED)
+	entity.xSpeed = MAX_X_SPEED;
+else if (entity.xSpeed < -MAX_X_SPEED)
+	entity.xSpeed = -MAX_X_SPEED;
+```
+
+**减速**：松开按键，让玩家受“地面摩擦力”作用，减慢速度的过程。
+
+**刹车**：按下与当前移动方向相反的按键，更快减速的过程。
+
+玩家静止且没有按键时，处于**空闲**状态。
+
+#### 分配加速度
+
+如果加速时的加速度为a，那么可以把减速时的加速度设为-a，把刹车时的加速度设为-2a.
+
+大概因为简洁，我研究的两款FC游戏（任天堂超级玛丽1和冒险岛2）都使用这种比例分配三种情况下的加速度。
+
+空闲状态下的加速度为0。
+
+#### 判定
+
+为了决定使用哪个加速度，需要判定当前处于哪种情况。此外还需要知道加速度的方向（正→右/负→左）。
+
+下面是一种判定方法：
+
+```java
+final int ACCEL_ACCEL = 2; // 加速时的加速度大小
+final int ACCEL_DECEL = 2; // 减速时的加速度大小
+final int ACCEL_BRAKE = 4; // 刹车时的加速度大小
+int accel;
+int runningDir;
+if (entity.xSpeed > 0)
+	runningDir = RIGHT;
+else if (entity.xSpeed < 0)
+	runningDir = LEFT;
+else
+	runningDir = leftRightKey;
+
+int runningState;
+if (leftRightKey == NONE)
+	runningState = (runningDir == NONE) ? IDLE : DECEL;
+else
+    runningState = (leftRightKey == runningDir) ? ACCEL : BRAKE;
+
+if (runningState == IDLE) {
+	accel = 0;
+} else if (runningState == DECEL) {
+	accel = (runningDir == RIGHT) ? ACCEL_DECEL : -ACCEL_DECEL;
+} else {
+	accel = (runningState == ACCEL) ? ACCEL_ACCEL : -ACCEL_BRAKE;
+    if (leftRightKey == LEFT)
+        accel = -accel;
+}
+```
+
+#### 刹车动画
+
+可以给玩家准备刹车专用的“动作”。刹车动画的朝向可以与玩家速度方向一致（可直接使用上面的runningDir）。
+
+（刹车时头已经转过，但脚还未转。所以我也不知道这个“朝向”应指代头还是脚。）
+
+![](images/mariobrake.gif)
+
+如果没有刹车动画，根据上面“朝向”部分的逻辑，刹车时玩家会马上面朝相反的方向。这也可以接受。
+
+### B键冲刺
+
+在B键按下时，玩家应该比平时走得要快。（所谓的“**冲刺**”）
+
+这时至少应该放宽最大速度。可以使用更高的加速时加速度，也可不用。为了支持这样做，上面的MAX\_X\_SPEED和ACCEL\_ACCEL不应再是常量，应作为变量根据B键是否按下从两值中取。
+
+冲刺时玩家的速度可能已经超过平时的最大速度，此时松开B键，若让玩家的速度马上回到平时的最大速度，会显得很突兀。如果想要克服，可以采用延迟/减缓速度变化的手段。
+
+任天堂超级玛丽中，一旦按下B键，RunningTimer会被置为10. 一旦松开B键，RunningTimer则会每帧减1，直至减为0。只要RunningTimer仍为非零，就采用冲刺用最大速度和冲刺用加速时加速度。所以放开B键时玩家不会马上切换到低速。
+
+冒险岛2则使用了一种缓慢修正的方法。若玩家的速度超出最大速度，那么不再把加速度累加到速度上，而是让速度大小每帧减小1.
+
+### 制动
+
+现实中，汽车不会减速到与原来速度相反。所以游戏里的玩家也一样。
+
+我自己写马里奥游戏时，经常遇到这种情况：玩家向右移动已减速到2，但减速时的加速度大小是5. 于是下一帧玩家速度变成-3，变成向左移动。再减速（+5），于是速度又变为2。速度在-3和2之间来回变动，导致本应该静止的玩家逐渐向左侧（-3+2=-1）晃动。每次我都不明所以。
+
+因此，若处于减速/刹车状态，若玩家当前的速度再减就会跨过0线，在累加到玩家位置上之后，应直接置0.
+
+```java
+if ((runningState == DECEL && abs(entity.xSpeed) < ACCEL_DECEL) ||
+    (runningState == BRAKE && abs(entity.xSpeed) < ACCEL_BRAKE))
+    entity.xSpeed = 0;
+```
 
 ### 空中移动
 
-## 实现
+物理中学到，空气阻力一般比地面摩擦力要小。游戏中，玩家不与地面接触（onGround==false）时，也可以有不同的移动策略。
 
-### 最简单的行走
+任天堂超级玛丽中，在空中没有减速和刹车（相当于减速和刹车时的加速度为0）。也不在空中改变朝向。
 
-按下按键时匀速前进，松开按键时停止前进。
+（顺便说一下，在空中行进和改变方向本身是违背物理规律的）
 
-```java
+冒险岛2中，似乎没有准备专门的空中移动策略。
 
-```
+### 坡路移动
 
-B键按下时，应使用更高的速度。
+玩家在坡路上移动时，x方向的速度应该在上坡时比平路慢，下坡时比上坡时快。
 
-这是我最喜欢的方式。:)
+（图：超级玛丽3中第2关，玩家在上坡和下坡）
 
-### 马里奥式行走
+如果不考虑上下坡，至少应该知道坡路上x方向的速度比平时要慢，否则看起来会不自然。（若玩家在平路上移动的速度为1，那么在45°坡路上使用相同的x方向速度，实际移动速度则是1.414）
 
-B键按下时，应使用更大的加速度和最大速度。
+玩家在坡路上移动，可以自带y方向的速度。也可以使用较小的x，通过*地面适配*让玩家的行走速度看起来分配到了y方向上。
 
-（行走方向与控制？方向相反时）
+## 实例：冒险岛2中玩家移动的算法
 
-#### 制动
+冒险岛2中没有直接存储速度大小，而是使用一个变量作为速度的“索引”。这个变量在玩家静止时为0x80，在玩家速度向左加大时逐渐减小，在玩家速度向右加大时逐渐增加。施加加速度是通过让这个变量自增子减实现的。游戏把这个变量偏离中心0x80的距离乘以一个因子，让它变成真正的速度。
 
-当玩家的横向速度逐渐减小时，
-
-不可以在速度很小时清零，否则
-
-#### 加速延时
-
-（从最大速度脱离，需要等待定时器结束。除非刹车）
-
-### ?? 档位控制
+参见演示程序IslandRun.
