@@ -2,6 +2,10 @@
 
 马里奥式横版卷轴游戏的原理。（笔记/教程）
 
+## 许可协议
+
+本repo里所有的文档，包括在协议发布前提交（commit）的文档，版权都遵从 [署名-非商业性使用-相同方式共享](http://creativecommons.net.cn/licenses/meet-the-licenses/) 协议。违反协议的行为会被看做侵权。
+
 ## 目录
 
 - [简介](intro.md)
