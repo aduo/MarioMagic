@@ -25,7 +25,7 @@
   - [行走](walk.md)
   - [跳跃与摔落](jump.md)
   - [振荡效果](swing.md)
-  - 运送板
+  - [运送板](platform.md)
   - 卷轴滚动
   - [弹簧](spring.md)
   - 碎砖块
