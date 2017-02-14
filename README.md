@@ -20,7 +20,7 @@
   - [移动与修正](movecorrection.md)
   - [碰撞检测法](colldet.md)
   - [运动模型](movemodel.md)
-  - [地面检测](groundadapt.md)
+  - [地面适配](groundadapt.md)
 - 实现
   - [行走](walk.md)
   - [跳跃与摔落](jump.md)
