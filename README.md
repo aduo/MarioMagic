@@ -10,6 +10,7 @@
   - TileMap
   - 数值积分
   - 定点小数和分数
+  - AoS与SoA存储
 - 通用知识
   - [基本认知](gamebasic.md)
   - [两种控制模式](ctrlpattern.md)
