@@ -21,12 +21,12 @@
   - [碰撞检测法](colldet.md)
   - [运动模型](movemodel.md)
   - [地面适配](groundadapt.md)
+  - [卷轴滚动](scroll.md)
 - 实现
   - [行走](walk.md)
   - [跳跃与摔落](jump.md)
   - [振荡效果](swing.md)
   - [运送板](platform.md)
-  - 卷轴滚动
   - [弹簧](spring.md)
   - 碎砖块
 
