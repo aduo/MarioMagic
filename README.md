@@ -10,9 +10,11 @@
 
 - [简介](intro.md)
 - 预备知识
-  - 游戏循环
-  - TileMap
+  - [游戏循环](gameloop.md)
+  - [TileMap](tilemap.md)
   - 数值积分
+  - 定点小数和分数
+  - [AoS与SoA存储](aossoa.md)
 - 通用知识
   - [基本认知](gamebasic.md)
   - [两种控制模式](ctrlpattern.md)
