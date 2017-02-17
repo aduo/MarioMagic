@@ -246,6 +246,31 @@ if (runningState == STOPPING || runningState == BRAKING) {
 
 ## 通用手段的总结
 
+### 左右统一
+
+以把玩家限制在最大速度为例，有些老游戏会这样实现：
+
+```java
+if (abs(player.xSpeed) > MAX_X_SPEED)
+	player.xSpeed = (player.xSpeed > 0) ? MAX_X_SPEED : -MAX_X_SPEED;
+```
+
+而另一些则会为左右方向各写一套代码：
+
+```java
+if (player.xSpeed > 0) {
+	if (player.xSpeed > MAX_X_SPEED)
+    	player.xSpeed = MAX_X_SPEED;
+} else {
+	if (player.xSpeed < -MAX_X_SPEED)
+    	player.xSpeed = -MAX_X_SPEED;
+}
+```
+
+这种“左右分开”的办法显然控制得更具体：每次只考虑一种情况。判断时，像取绝对值这种操作可以省去；处理时，也无需先了解左右。其实，在确定玩家的速度是要增加还是减少时，就已经可以开始这样二分。
+
+但是我仍然推荐前面“左右统一”的实现方法。它可以能避免代码重复，也不会因反复的判断浪费太多时间。
+
 ### 避免振荡
 
 玩家若没办法正好减速到0，会在右侧减速/左侧减速之间来回切换。
