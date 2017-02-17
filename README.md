@@ -18,7 +18,7 @@
   - [两种控制模式](ctrlpattern.md)
   - [按键过滤](keyfilter.md)
   - [移动与修正](movecorrection.md)
-  - [碰撞检测法](colldet.md)
+  - [碰撞检测](colldet.md)
   - [运动模型](movemodel.md)
   - [地面适配](groundadapt.md)
   - [卷轴滚动](scroll.md)
