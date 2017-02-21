@@ -38,7 +38,7 @@ entity.onGround = true;
 final int GRAVITY = 1; // 重力加速度
 final int MAX_Y_SPEED = 10; // 最大下落速度
 
-if (entity.onGround) {
+if (!entity.onGround) {
 	entity.y += entity.ySpeed;
     entity.ySpeed = min(entity.ySpeed + GRAVITY, MAX_Y_SPEED);
 }
