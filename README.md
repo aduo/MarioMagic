@@ -12,8 +12,8 @@
 - 预备知识
   - [游戏循环](gameloop.md)
   - [TileMap](tilemap.md)
-  - 数值积分
-  - 定点小数和分数
+  - [数值积分](numintegral.md)
+  - [定点小数与进位机制](fraction.md)
   - [AoS与SoA存储](aossoa.md)
 - 通用知识
   - [基本认知](gamebasic.md)
@@ -30,6 +30,5 @@
   - [振荡效果](swing.md)
   - [运送板](platform.md)
   - [弹簧](spring.md)
-  - 碎砖块
 
 *kbridge*
