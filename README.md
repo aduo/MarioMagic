@@ -30,5 +30,6 @@
   - [振荡效果](swing.md)
   - [运送板](platform.md)
   - [弹簧](spring.md)
+- [附录: 研究过的游戏](games.md)
 
 *kbridge*
