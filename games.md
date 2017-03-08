@@ -6,5 +6,8 @@
   * 超级玛丽3(Super Mario Bros. 3)
 * PC
   * 蚯蚓战士(Earthworm Jim)
+  * 毁灭战士(DOOM) 它不是基于TileMap的，但它的行走与地面适配的算法给了我一些启发
+    * https://github.com/id-Software/Quake/blob/master/WinQuake/sv_move.c
+    * https://github.com/id-Software/Quake/blob/master/WinQuake/sv_phys.c
 * Flash
   * 裤头冒险1(Fancy Pants Adventure)
